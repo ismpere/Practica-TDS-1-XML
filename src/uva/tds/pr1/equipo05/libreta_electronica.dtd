@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE libreta_electronica[
 
-<!ELEMENT libreta_electronica()>
-<!ELEMENT to (#PCDATA)>
-<!ELEMENT from (#PCDATA)>
-<!ELEMENT heading (#PCDATA)>
-<!ELEMENT body (#PCDATA)>
+<!ELEMENT contacto(persona|grupo)>
+<!ELEMENT persona (apellidos?,nombre,correo+,telefono+)>
+<!ATTLIST persona alias ID #REQUIRED>
+<!ELEMENT grupo (persona+)>
+<!ATTLIST grupo nombrgrupo ID #REQUIRED>
+<!ELEMENT nombre (#PCDATA)>
+<!ELEMENT apellidos (#PCDATA)>
+<!ELEMENT correo (#PCDATA)>
+<!ELEMENT telefono (numtelef)>
+<!ATTLIST telefono tipotelef (MovilPersonal|MovilTrabajo|FijoCasa|FijoTrabajo) "MovilPersonal">
+<!ELEMENT numtelef (#PCDATA)>
+
 ]>
