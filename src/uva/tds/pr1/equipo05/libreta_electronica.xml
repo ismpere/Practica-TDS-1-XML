@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE libreta_electronica SYSTEM "libreta_electronica.dtd" >
+<libreta_electronica>
+	<contacto>
+		<persona alias="martorb">
+			<apellidos>Torbado</apellidos>
+			<nombre>Mario</nombre>
+			<correo>mario@gmail.com</correo>
+			<telefono>
+				<numtelef>671915987</numtelef>
+			</telefono>
+		</persona>
+	</contacto>
+	<contacto>
+		<grupo nombregrupo="grupo1">
+			<miembro id="martorb"></miembro>
+		</grupo>
+	</contacto>
+</libreta_electronica>
