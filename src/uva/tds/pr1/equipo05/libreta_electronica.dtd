@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE libreta_electronica[
-<!ELEMENT libreta(contacto*)>
-<!ELEMENT contacto(persona|grupo)*>
+<!ELEMENT libreta (contacto*)>
+<!ELEMENT contacto (persona|grupo)*>
 <!ELEMENT persona (apellidos?,nombre,correo+,telefono*)>
 <!ATTLIST persona alias ID #REQUIRED>
 <!ATTLIST grupo nombrgrupo ID #REQUIRED>
@@ -14,5 +13,3 @@
 <!ELEMENT telefono (numtelef)>
 <!ATTLIST telefono tipotelef (MovilPersonal|MovilTrabajo|FijoCasa|FijoTrabajo) "MovilPersonal">
 <!ELEMENT numtelef (#PCDATA)>
-
-]>
