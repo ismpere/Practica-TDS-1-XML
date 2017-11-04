@@ -3,7 +3,7 @@
 <!ELEMENT contacto (persona|grupo)*>
 <!ELEMENT persona (apellidos?,nombre,correo+,telefono*)>
 <!ATTLIST persona alias ID #REQUIRED>
-<!ATTLIST grupo nombrgrupo ID #REQUIRED>
+<!ATTLIST grupo nombregrupo ID #REQUIRED>
 <!ELEMENT grupo (miembro+)>
 <!ELEMENT miembro EMPTY>
 <!ATTLIST miembro id IDREF #REQUIRED>  <!--IDREF es persona-->
