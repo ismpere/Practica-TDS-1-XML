@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <!ELEMENT libreta (contacto*)>
+=======
+<!ELEMENT libreta_electronica (contacto*)>
+>>>>>>> 275d9ebe8c47f44d333b2317750a549b3a7f44ef
 <!ELEMENT contacto (persona|grupo)*>
 <!ELEMENT persona (apellidos?,nombre,correo+,telefono*)>
 <!ATTLIST persona alias ID #REQUIRED>
