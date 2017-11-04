@@ -1,4 +1,4 @@
-package uva.tds.pr1;
+package uva.tds.pr1.equipo05;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.Map;
 /**
  * 
  * @author martorb
+ * @author ismpere
  *
  */
 public interface EContactSystemInterface {
