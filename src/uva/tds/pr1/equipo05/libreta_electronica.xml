@@ -12,8 +12,38 @@
 		</persona>
 	</contacto>
 	<contacto>
+		<persona alias="toso">
+			<apellidos>Roman</apellidos>
+			<nombre>Antonio</nombre>
+			<correo>toso@gmail.com</correo>
+			<telefono>
+				<numtelef>699696969</numtelef>
+			</telefono>
+		</persona>
+	</contacto>
+	<contacto>
+		<persona alias="ismpere">
+			<nombre>Ismael</nombre>
+			<correo>ismael@gmail.com</correo>
+			<correo>ismael@hotmail.com</correo>
+			<telefono>
+				<numtelef>669251243</numtelef>
+			</telefono>
+			<telefono tipotelef="FijoCasa">
+				<numtelef>983511021</numtelef>
+			</telefono>
+		</persona>
+	</contacto>
+	<contacto>
 		<grupo nombregrupo="grupo1">
-			<miembro id="martorb"></miembro>
+			<miembro id="martorb"/>
+			<miembro id="toso"/>
+		</grupo>
+	</contacto>
+	<contacto>
+		<grupo nombregrupo="grupo2">
+			<miembro id="ismpere"/>
+			<miembro id="grupo1"/>
 		</grupo>
 	</contacto>
 </libreta_electronica>
