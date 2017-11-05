@@ -9,14 +9,12 @@ public class Contact {
 	String id;
 	/**
 	 * Constructor por defecto de la clase Contact
-	 * @assert.pre !id.equals(null)
 	 * @assert.pre !id.equals("")
 	 * @assert.pre id.length()<=20
 	 * @param id
 	 * 
 	 */
 	public Contact(String id){
-		assert(!id.equals(null));
 		assert(!id.equals(""));
 		assert(id.length()<=20);
 		this.id = id;
@@ -30,13 +28,11 @@ public class Contact {
 	}
 	/**
 	 * Cambia el ID del contacto
-	 * @assert.pre !id.equals(null)
 	 * @assert.pre !id.equals("")
 	 * @assert.pre id.length()<=20
 	 * @param id
 	 */
 	public void setID(String id){
-		assert(!id.equals(null));
 		assert(!id.equals(""));
 		assert(id.length()<=20);
 		this.id = id;
