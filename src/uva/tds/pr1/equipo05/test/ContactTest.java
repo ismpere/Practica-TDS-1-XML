@@ -35,9 +35,9 @@ public class ContactTest {
 	@Test
 	public void testSetIDValidoGrande(){
 		Contact x = new Contact("1");
-		x.setID("Yo-Tambien-Las-Tengo");
+		x.setID("Tengo-Veinte-Letras!");
 		
-		assertEquals(x.getID(),"Yo-Tambien-Las-Tengo");
+		assertEquals(x.getID(),"Tengo-Veinte-Letras!");
 	}
 	@Test(expected=NullPointerException.class)
 	public void testInicializacionIDNoValidoNulo(){
