@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE libreta_electronica SYSTEM "libreta_electronica.dtd" >
+<!DOCTYPE libreta_electronica SYSTEM "src/uva/tds/pr1/equipo05/libreta_electronica.dtd" >
 <libreta_electronica>
 	<contacto>
 		<persona alias="martorb">
