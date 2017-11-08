@@ -13,12 +13,6 @@ public interface EContactSystemInterface {
 	
 	/**
 	 * 
-	 * @return
-	 */
-	public static EcontactSystemInterface contactSystemFactory();
-	
-	/**
-	 * 
 	 * @param pathToXML
 	 */
 	void loadFrom(Path pathToXML);
@@ -28,6 +22,18 @@ public interface EContactSystemInterface {
 	 * @param pathToXML
 	 */
 	void updateTo(Path pathToXML);
+	
+	/**
+	 * 
+	 * @return
+	 */
+	boolean isXMLLoaded();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	boolean isModifiedAfterLoaded();
 	
 	/**	boolean isModifiedAfterLoaded();
 	 * 
