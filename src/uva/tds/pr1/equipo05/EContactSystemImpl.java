@@ -15,16 +15,21 @@ import java.lang.IllegalArgumentException;
 
 public class EContactSystemImpl implements EContactSystemInterface{
 	
+	boolean loaded, modified;
+	InputSource source;
+	Document document;
+	DocumentBuilderFactory domParserFactory;
+	DocumentBuilder parser;
+	
+	public EContactSystemImpl(){		
+	}
+	
 	public static EContactSystemInterface contactSystemFactory(){
-		return null;		
+		return new EContactSystemImpl();		
 	}
 
 	public void loadFrom(Path pathToXML) {
 		FileReader input;
-		InputSource source;
-		Document document;
-		DocumentBuilderFactory domParserFactory;
-		DocumentBuilder parser;
 		domParserFactory = DocumentBuilderFactory.newInstance();
 		domParserFactory.setValidating(true);
 		try{
@@ -40,6 +45,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		}catch(Exception e){
 			throw new IllegalStateException("Ha ocurrido un error al parsear el XML");
 		}
+		loaded = true;
 		System.out.println(parser.getClass());
 		System.out.println(parser.isValidating());
 		System.out.println(document.getDoctype().getName());
@@ -52,7 +58,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 	
 	public boolean isXMLLoaded(){
-		return true;
+		return loaded;
 	}
 	
 	public boolean isModifiedAfterLoaded(){
@@ -61,7 +67,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 
 	public void createNewPerson(String name, String nickname, String surName, String[] emails,
 			Map<String, EnumKindOfPhone> phones) {
-		// TODO Auto-generated method stub
+		Person x = new Person(name, surName, nickname, emails, phones);
 		
 	}
 
