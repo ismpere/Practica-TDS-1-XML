@@ -9,15 +9,34 @@ public class Person extends Contact{
 	private String alias;
 	private String nombre;
 	private String apellidos;
-	private String correo;
-	Map<EnumKindOfPhone,String> lista_telefonos;
+	private ArrayList<String> correos;
+	Map<String, EnumKindOfPhone> lista_telefonos;
 	
 	/**
 	 * Constructor por defecto de la clase Person
 	 * @param alias
 	 */
-	public Person(String alias){
+	public Person(String nombre, String alias, String[] correos){
 		super(alias);
+		this.nombre = nombre;
+		this.correos = new ArrayList<String>(Arrays.asList(correos));
+		lista_telefonos = new HashMap<String, EnumKindOfPhone>();
+	}
+	/**
+	 * 
+	 * @param nombre
+	 * @param apellidos
+	 * @param alias
+	 * @param correos
+	 * @param lista_telefonos
+	 */
+	public Person(String nombre, String apellidos, String alias, String[] correos, 
+			Map<String, EnumKindOfPhone> lista_telefonos){
+		super(alias);
+		this.nombre = nombre;
+		this.apellidos = apellidos;
+		this.correos = new ArrayList<String>(Arrays.asList(correos));
+		this.lista_telefonos = new HashMap<String, EnumKindOfPhone>(lista_telefonos);
 	}
 	
 	/**
@@ -51,11 +70,11 @@ public class Person extends Contact{
 	 * @assert.pre correo.length()<100
 	 * @param correo
 	 */
-	public void setCorreo(String correo){
+	public void addCorreo(String correo){
 		assert(correo.contains("@"));
 		assert(!correo.equals(""));
 		assert(correo.length()<100);
-		this.correo=correo;
+		this.correos.add(correo);
 	}
 	
 	/**
@@ -67,7 +86,7 @@ public class Person extends Contact{
 	public void addNum_telefono(String num_telefono,EnumKindOfPhone tipo){
 		assert(!num_telefono.equals(""));
 		assert(num_telefono.length()<50);
-		lista_telefonos.put(tipo,num_telefono);
+		lista_telefonos.put(num_telefono,tipo);
 	}
 	/**
 	 * Devuelve el alias de la persona
@@ -94,15 +113,20 @@ public class Person extends Contact{
 	 * Devuelve la dirección de correo electrónico de la persona
 	 * @return Correo electrónico.
 	 */
-	public String getCorreo(){
-		return correo;
+	public String[] getCorreos(){
+		return (String[])correos.toArray();
 	}
 	/**
-	 * 
+	 * FALTA DE IMPLEMENTAR
 	 * @return Numero de telefono.
 	 */
 	public String getTelefono(EnumKindOfPhone tipo){
-		return lista_telefonos.get(tipo);
+		return "A implementar";
 	}
+	public Map<String, EnumKindOfPhone> getTelefonos(){
+		Map<String, EnumKindOfPhone> aux = new HashMap<String, EnumKindOfPhone>(lista_telefonos);
+		return aux;
+	}
+	
 	
 }
