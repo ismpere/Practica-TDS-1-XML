@@ -1,6 +1,7 @@
 package uva.tds.pr1.equipo05;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 /**
  * Implementacion de la clase Group
  * @author ismpere
@@ -11,11 +12,20 @@ public class Group extends Contact{
 	ArrayList<Contact> contactos;
 	/**
 	 * Constructor por defecto de la clase Group
-	 * @param id
+	 * @param id nombreGrupo
 	 */
 	public Group(String id){
 		super(id);
 		contactos = new ArrayList<Contact>();
+	}
+	/**
+	 * Constructor de la clase Group
+	 * @param id nombreGrupo
+	 * @param contactos
+	 */
+	public Group(String id, Contact[] contactos){
+		super(id);
+		this.contactos = new ArrayList<Contact>(Arrays.asList(contactos));
 	}
 	/**
 	 * Añade el contacto al grupo
