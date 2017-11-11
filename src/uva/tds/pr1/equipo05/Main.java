@@ -24,6 +24,13 @@ public class Main{
 		System.out.println(antonio.getApellidos());
 		System.out.println(antonio.getNombre());
 		System.out.println(antonio.getTelefonos());
+		
+		Group grupo1 = contacts.getGroupByName("grupo1");
+		System.out.println(grupo1.getID());
+		Contact x = contacts.getAnyContactById("grupo1");
+		System.out.println(x.getID());
+		//Pasa lo mismo que con el getCorreos, hay que corregirlo
+		//System.out.println(grupo1.getContactos());
 		//El getCorreos da error, devolvemos mal los correos de la persona
 		//System.out.println(antonio.getCorreos());
 	}
