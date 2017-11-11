@@ -163,7 +163,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 
 	public Person getPersonByNickname(String name) {
 		Element persona = document.getElementById(name);
-		if(persona!=null && (persona.getNodeName().equals(persona))){
+		if(persona!=null && (persona.getNodeName().equals("persona"))){
 			String nombre;
 			String apellidos = null;
 			Map<String, EnumKindOfPhone> telefonos = null;
@@ -197,7 +197,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 
 	public Group getGroupByName(String name) {
 		Element grupo = document.getElementById(name);
-		if(grupo!=null && (grupo.getNodeName().equals(grupo))){
+		if(grupo!=null && (grupo.getNodeName().equals("grupo"))){
 			NodeList nodeContactos = grupo.getElementsByTagName("contacto");
 			Contact contactos[] = new Contact[nodeContactos.getLength()];
 			for(int i=0; i<nodeContactos.getLength(); i++){
