@@ -196,8 +196,18 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 
 	public Group getGroupByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		Element grupo = document.getElementById(name);
+		if(grupo!=null && (grupo.getNodeName().equals(grupo))){
+			NodeList nodeContactos = grupo.getElementsByTagName("contacto");
+			Contact contactos[] = new Contact[nodeContactos.getLength()];
+			for(int i=0; i<nodeContactos.getLength(); i++){
+				String id = nodeContactos.item(i).getAttributes().item(0).getTextContent();
+				contactos[i] = getAnyContactById(id);
+			}
+			return new Group(name, contactos);
+		}else{
+			return null;
+		}
 	}
 
 	public void addContactToGroup(Contact contact, Group group) {
