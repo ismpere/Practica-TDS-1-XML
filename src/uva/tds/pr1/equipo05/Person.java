@@ -25,6 +25,20 @@ public class Person extends Contact{
 	/**
 	 * 
 	 * @param nombre
+	 * @param alias
+	 * @param correos
+	 * @param lista_telefonos
+	 */
+	public Person(String nombre, String alias, String[] correos, 
+			Map<String, EnumKindOfPhone> lista_telefonos){
+		super(alias);
+		this.nombre = nombre;
+		this.correos = new ArrayList<String>(Arrays.asList(correos));
+		this.lista_telefonos = new HashMap<String, EnumKindOfPhone>(lista_telefonos);
+	}
+	/**
+	 * 
+	 * @param nombre
 	 * @param apellidos
 	 * @param alias
 	 * @param correos
@@ -83,7 +97,7 @@ public class Person extends Contact{
 	 * @assert num_telefono.length()<50
 	 * @param num_telefono
 	 */
-	public void addNum_telefono(String num_telefono,EnumKindOfPhone tipo){
+	public void addNum_telefono(String num_telefono, EnumKindOfPhone tipo){
 		assert(!num_telefono.equals(""));
 		assert(num_telefono.length()<50);
 		lista_telefonos.put(num_telefono,tipo);
