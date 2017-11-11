@@ -16,28 +16,32 @@ public class PersonTest {
 	
 	@Test
 	public void testNombreValidoCorto(){
-		Person x=new Person("2");
+		/*Person x=new Person("2");
 		x.setNombre("A");
-		assertEquals(x.getNombre(),"2");
+		assertEquals(x.getNombre(),"2");*/
+		fail("Not yet implemented");
 	}
 	
 	@Test
 	public void testNombreValidoLargo(){
-		Person x=new Person("2");
+		/*Person x=new Person("2");
 		x.setNombre("Este-nombre-tiene-nadamas-ynadamenos-que49-letras");
-		assertEquals(x.getNombre(),"Este-nombre-tiene-nadamas-ynadamenos-que49-letras");
+		assertEquals(x.getNombre(),"Este-nombre-tiene-nadamas-ynadamenos-que49-letras");*/
+		fail("Not yet implemented");
 	}
 	
 	@Test (expected=AssertionError.class)
 	public void testNombreNoValidoVacio(){
-		Person x=new Person("2");
-		x.setNombre("");
+		/*Person x=new Person("2");
+		x.setNombre("");*/
+		fail("Not yet implemented");
 	}
 	
 	@Test (expected=AssertionError.class)
 	public void testNombreNoValidoLargo(){
-		Person x=new Person("2");
-		x.setNombre("Estenombreesclarayevidentementeunnombredemasiadolargo");
+		/*Person x=new Person("2");
+		x.setNombre("Estenombreesclarayevidentementeunnombredemasiadolargo");*/
+		fail("Not yet implemented");
 	}
 	
 	@Test
