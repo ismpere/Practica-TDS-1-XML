@@ -229,8 +229,14 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 
 	public void removeContactFromGroup(Contact contact, Group group) {
-		
-		
+		Element grupo = document.getElementById(group.getID());
+		NodeList miembros = grupo.getElementsByTagName("miembro");
+		for(int i=0;i<miembros.getLength();i++){
+			if(miembros.item(i).getTextContent()==contact.getID()){
+				grupo.removeChild(miembros.item(i));
+			}
+			
+		}
 	}
 	
 	public void removeContactFromSystem(Contact contact){
