@@ -145,38 +145,54 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 
 	public Contact getAnyContactById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		Element contacto = document.getElementById(id);
+		if(contacto!=null){
+			Contact x = null;
+			if(getPersonByNickname(id)!=null){
+				x = getPersonByNickname(id);
+			}else{
+				if(getGroupByName(id)!=null){
+					x = getGroupByName(id);
+				}
+			}
+			return x;
+		}else{
+			return null;
+		}
 	}
 
 	public Person getPersonByNickname(String name) {
 		Element persona = document.getElementById(name);
-		String nombre;
-		String apellidos = null;
-		Map<String, EnumKindOfPhone> telefonos = null;
-		
-		
-		nombre = persona.getElementsByTagName("nombre").item(0).getTextContent();
-		if(persona.getElementsByTagName("apellidos")!=null){
-			apellidos = persona.getElementsByTagName("apellidos").item(0).getTextContent();
-		}
-		NodeList nodeCorreos = persona.getElementsByTagName("correos");
-		String correos[] = new String[nodeCorreos.getLength()];
-		for(int i=0; i<nodeCorreos.getLength(); i++){
-			correos[i] = nodeCorreos.item(i).getTextContent();
-		}
-		NodeList nodeTelefonos = persona.getElementsByTagName("telefono");
-		if(nodeTelefonos!=null){
-			telefonos = new HashMap<String, EnumKindOfPhone>(nodeTelefonos.getLength());
-			for(int i=0; i<nodeTelefonos.getLength(); i++){
-				NamedNodeMap attr = nodeTelefonos.item(i).getAttributes();
-				String tipotelef = attr.getNamedItem("tipotelef").getTextContent();
-				EnumKindOfPhone tt = EnumKindOfPhone.valueOf(tipotelef);
-				String numero = nodeTelefonos.item(i).getTextContent();
-				telefonos.put(numero, tt);
+		if(persona!=null && (persona.getNodeName().equals(persona))){
+			String nombre;
+			String apellidos = null;
+			Map<String, EnumKindOfPhone> telefonos = null;
+			
+			
+			nombre = persona.getElementsByTagName("nombre").item(0).getTextContent();
+			if(persona.getElementsByTagName("apellidos")!=null){
+				apellidos = persona.getElementsByTagName("apellidos").item(0).getTextContent();
 			}
+			NodeList nodeCorreos = persona.getElementsByTagName("correos");
+			String correos[] = new String[nodeCorreos.getLength()];
+			for(int i=0; i<nodeCorreos.getLength(); i++){
+				correos[i] = nodeCorreos.item(i).getTextContent();
+			}
+			NodeList nodeTelefonos = persona.getElementsByTagName("telefono");
+			if(nodeTelefonos!=null){
+				telefonos = new HashMap<String, EnumKindOfPhone>(nodeTelefonos.getLength());
+				for(int i=0; i<nodeTelefonos.getLength(); i++){
+					NamedNodeMap attr = nodeTelefonos.item(i).getAttributes();
+					String tipotelef = attr.getNamedItem("tipotelef").getTextContent();
+					EnumKindOfPhone tt = EnumKindOfPhone.valueOf(tipotelef);
+					String numero = nodeTelefonos.item(i).getTextContent();
+					telefonos.put(numero, tt);
+				}
+			}
+			return new Person(nombre, apellidos, name, correos, telefonos);
+		}else{
+			return null;
 		}
-		return new Person(nombre, apellidos, name, correos, telefonos);
 	}
 
 	public Group getGroupByName(String name) {
