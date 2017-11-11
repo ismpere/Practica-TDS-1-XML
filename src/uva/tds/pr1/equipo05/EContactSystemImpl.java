@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -31,13 +32,11 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	Document document;
 	DocumentBuilderFactory domParserFactory;
 	DocumentBuilder parser;
-	static ArrayList<Person> personas;
 	
 	public EContactSystemImpl(){		
 	}
 	
 	public static EContactSystemInterface contactSystemFactory(){
-		personas = new ArrayList<Person>();
 		return new EContactSystemImpl();		
 	}
 
@@ -59,14 +58,33 @@ public class EContactSystemImpl implements EContactSystemInterface{
 			throw new IllegalStateException("Ha ocurrido un error al parsear el XML");
 		}
 		loaded = true;
+		modified = false;
 		System.out.println(parser.getClass());
 		System.out.println(parser.isValidating());
 		System.out.println(document.getDoctype().getName());
 		
 	}
-
+	/**
+	 * @assert.pre isModifiedAfterLoaded()
+	 */
 	public void updateTo(Path pathToXML) {
-		// TODO Auto-generated method stub
+		assert(isModifiedAfterLoaded());
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		String systemId = document.getDoctype().getSystemId();
+		DOMSource source = new DOMSource(document);
+		StreamResult result = new StreamResult(new File(pathToXML.toString()));
+		try{
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, systemId);
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.transform(source, result);
+
+			System.out.println("File saved!");
+		}catch(Exception e){
+			throw new IllegalStateException("Ha ocurrido un problema al actualizar el archivo");
+		}
 		
 	}
 	
@@ -115,7 +133,9 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		}
 		Element contacto = document.createElement("contacto");
 		contacto.appendChild(persona);
-		libreta.appendChild(contacto);		
+		libreta.appendChild(contacto);	
+		
+		modified = true;
 	}
 
 	public void createNewGroup(String name, Contact[] contacts) {
@@ -153,7 +173,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 	public boolean isContactById(String id){
 		boolean is = false;
-		if(!getAnyContactById(id).equals(null)){
+		if(!(getAnyContactById(id) == null)){
 			is = true;
 		}
 		return is;
