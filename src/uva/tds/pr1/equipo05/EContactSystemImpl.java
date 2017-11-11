@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -108,7 +109,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		Element libreta = document.getDocumentElement();
 		Element persona = document.createElement("persona");
 		persona.setAttribute("alias", nickname);
-		if(!(surName == null)){
+		if(surName != null){
 			Element apellidos = document.createElement("apellidos");
 			apellidos.appendChild(document.createTextNode(surName));
 			persona.appendChild(apellidos);
@@ -121,7 +122,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 			correo.appendChild(document.createTextNode(emails[i]));
 			persona.appendChild(correo);
 		}
-		if(!(phones == null) && !phones.isEmpty()){
+		if(phones != null && !phones.isEmpty()){
 			for (Map.Entry<String, EnumKindOfPhone> entry : phones.entrySet()){
 				Element telefono = document.createElement("telefono");
 				telefono.setAttribute("tipotelef", entry.getValue().toString());
@@ -153,19 +154,69 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 
 	public Contact getAnyContactById(String id) {
-		assert(id!="");
-		
-		return null;
+		Element contacto = document.getElementById(id);
+		if(contacto!=null){
+			Contact x = null;
+			if(getPersonByNickname(id)!=null){
+				x = getPersonByNickname(id);
+			}else{
+				if(getGroupByName(id)!=null){
+					x = getGroupByName(id);
+				}
+			}
+			return x;
+		}else{
+			return null;
+		}
 	}
 
 	public Person getPersonByNickname(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		Element persona = document.getElementById(name);
+		if(persona!=null && (persona.getNodeName().equals("persona"))){
+			String nombre;
+			String apellidos = null;
+			Map<String, EnumKindOfPhone> telefonos = null;
+			
+			
+			nombre = persona.getElementsByTagName("nombre").item(0).getTextContent();
+			if(persona.getElementsByTagName("apellidos")!=null){
+				apellidos = persona.getElementsByTagName("apellidos").item(0).getTextContent();
+			}
+			NodeList nodeCorreos = persona.getElementsByTagName("correos");
+			String correos[] = new String[nodeCorreos.getLength()];
+			for(int i=0; i<nodeCorreos.getLength(); i++){
+				correos[i] = nodeCorreos.item(i).getTextContent();
+			}
+			NodeList nodeTelefonos = persona.getElementsByTagName("telefono");
+			if(nodeTelefonos!=null){
+				telefonos = new HashMap<String, EnumKindOfPhone>(nodeTelefonos.getLength());
+				for(int i=0; i<nodeTelefonos.getLength(); i++){
+					NamedNodeMap attr = nodeTelefonos.item(i).getAttributes();
+					String tipotelef = attr.getNamedItem("tipotelef").getTextContent();
+					EnumKindOfPhone tt = EnumKindOfPhone.valueOf(tipotelef);
+					String numero = nodeTelefonos.item(i).getTextContent();
+					telefonos.put(numero, tt);
+				}
+			}
+			return new Person(nombre, apellidos, name, correos, telefonos);
+		}else{
+			return null;
+		}
 	}
 
 	public Group getGroupByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		Element grupo = document.getElementById(name);
+		if(grupo!=null && (grupo.getNodeName().equals("grupo"))){
+			NodeList nodeContactos = grupo.getElementsByTagName("contacto");
+			Contact contactos[] = new Contact[nodeContactos.getLength()];
+			for(int i=0; i<nodeContactos.getLength(); i++){
+				String id = nodeContactos.item(i).getAttributes().item(0).getTextContent();
+				contactos[i] = getAnyContactById(id);
+			}
+			return new Group(name, contactos);
+		}else{
+			return null;
+		}
 	}
 
 	public void addContactToGroup(Contact contact, Group group) {
