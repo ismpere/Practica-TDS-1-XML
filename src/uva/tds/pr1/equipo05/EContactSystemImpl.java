@@ -133,7 +133,8 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 
 	public Contact getAnyContactById(String id) {
-		// TODO Auto-generated method stub
+		assert(id!="");
+		
 		return null;
 	}
 
@@ -148,17 +149,22 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 
 	public void addContactToGroup(Contact contact, Group group) {
-		// TODO Auto-generated method stub
+		assert(document.getElementById(group.getID())!=null);
+		assert(document.getElementById(contact.getID())!=null);
 		
+		Element grupo = document.getElementById(group.getID());
+		Element miembro =document.getElementById(contact.getID());
+		grupo.appendChild(miembro);
 	}
 
 	public void removeContactFromGroup(Contact contact, Group group) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	
 	public void removeContactFromSystem(Contact contact){
-		
+		Element contacto = document.getElementById(contact.getID());
+		contacto.getParentNode().removeChild(contacto);
 	}
 	public boolean isContactById(String id){
 		boolean is = false;
