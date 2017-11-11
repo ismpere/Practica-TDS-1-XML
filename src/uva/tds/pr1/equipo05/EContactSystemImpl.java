@@ -119,8 +119,17 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 
 	public void createNewGroup(String name, Contact[] contacts) {
-		// TODO Auto-generated method stub
+		assert(isXMLLoaded());
+		assert(contacts.length!=0);
 		
+		Element libreta = document.getDocumentElement();
+		Element grupo = document.createElement("grupo");
+		grupo.setAttribute("nombre", name);
+		for(int i=0;i<contacts.length;i++){
+			Element miembro=document.createElement("miembro"+(i+1));
+			miembro.appendChild(document.createTextNode(contacts[i].getID()));
+			grupo.appendChild(miembro);
+		}
 	}
 
 	public Contact getAnyContactById(String id) {
