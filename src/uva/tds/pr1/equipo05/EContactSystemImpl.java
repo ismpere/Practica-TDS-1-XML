@@ -1,17 +1,28 @@
 package uva.tds.pr1.equipo05;
 
+import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import uva.tds.pr1.equipo05.aux.SimpleErrorHandler;
 import java.lang.IllegalArgumentException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class EContactSystemImpl implements EContactSystemInterface{
 	
@@ -20,11 +31,13 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	Document document;
 	DocumentBuilderFactory domParserFactory;
 	DocumentBuilder parser;
+	static ArrayList<Person> personas;
 	
 	public EContactSystemImpl(){		
 	}
 	
 	public static EContactSystemInterface contactSystemFactory(){
+		personas = new ArrayList<Person>();
 		return new EContactSystemImpl();		
 	}
 
@@ -62,13 +75,47 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 	
 	public boolean isModifiedAfterLoaded(){
-		return true;
+		return modified;
 	}
-
+	/**
+	 * @assert.pre isXMLLoaded()
+	 * @assert.pre emails.length>0
+	 * @assert.pre !isContactById(nickname)
+	 */
 	public void createNewPerson(String name, String nickname, String surName, String[] emails,
 			Map<String, EnumKindOfPhone> phones) {
-		Person x = new Person(name, surName, nickname, emails, phones);
-		
+		assert(isXMLLoaded());
+		assert(emails.length>0);
+		//assert(!isContactById(nickname));
+		Element libreta = document.getDocumentElement();
+		Element persona = document.createElement("persona");
+		persona.setAttribute("alias", nickname);
+		if(!(surName == null)){
+			Element apellidos = document.createElement("apellidos");
+			apellidos.appendChild(document.createTextNode(surName));
+			persona.appendChild(apellidos);
+		}
+		Element nombre = document.createElement("nombre");
+		nombre.appendChild(document.createTextNode(name));
+		persona.appendChild(nombre);
+		for(int i=0; i<emails.length; i++){
+			Element correo = document.createElement("correo");
+			correo.appendChild(document.createTextNode(emails[i]));
+			persona.appendChild(correo);
+		}
+		if(!(phones == null) && !phones.isEmpty()){
+			for (Map.Entry<String, EnumKindOfPhone> entry : phones.entrySet()){
+				Element telefono = document.createElement("telefono");
+				telefono.setAttribute("tipotelef", entry.getValue().toString());
+				Element numtelef = document.createElement("numtelef");
+				numtelef.appendChild(document.createTextNode(entry.getKey()));
+				telefono.appendChild(numtelef);
+				persona.appendChild(telefono);
+			}
+		}
+		Element contacto = document.createElement("contacto");
+		contacto.appendChild(persona);
+		libreta.appendChild(contacto);		
 	}
 
 	public void createNewGroup(String name, Contact[] contacts) {
@@ -103,6 +150,13 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	
 	public void removeContactFromSystem(Contact contact){
 		
+	}
+	public boolean isContactById(String id){
+		boolean is = false;
+		if(!getAnyContactById(id).equals(null)){
+			is = true;
+		}
+		return is;
 	}
 	
 }
