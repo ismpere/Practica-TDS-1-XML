@@ -18,5 +18,12 @@ public class Main{
 		contacts.loadFrom(ruta2);
 		contacts.createNewPerson("Yania", "ycg", "Crespo", correos2, null);
 		contacts.updateTo(ruta3);
+		
+		Person antonio = contacts.getPersonByNickname("toso");
+		System.out.println(antonio.getID());
+		System.out.println(antonio.getApellidos());
+		System.out.println(antonio.getNombre());
+		System.out.println(antonio.getTelefonos());
+		System.out.println(antonio.getCorreos());
 	}
 }
