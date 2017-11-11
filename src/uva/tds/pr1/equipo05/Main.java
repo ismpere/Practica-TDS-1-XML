@@ -24,6 +24,7 @@ public class Main{
 		System.out.println(antonio.getApellidos());
 		System.out.println(antonio.getNombre());
 		System.out.println(antonio.getTelefonos());
-		System.out.println(antonio.getCorreos());
+		//El getCorreos da error, devolvemos mal los correos de la persona
+		//System.out.println(antonio.getCorreos());
 	}
 }
