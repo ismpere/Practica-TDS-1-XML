@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><libreta_electronica>
+	<contacto>
+		<persona alias="martorb">
+			<apellidos>Torbado</apellidos>
+			<nombre>Mario</nombre>
+			<correo>mario@gmail.com</correo>
+			<telefono tipotelef="MovilPersonal">
+				<numtelef>671915987</numtelef>
+			</telefono>
+		</persona>
+	</contacto>
+	<contacto>
+		<persona alias="toso">
+			<apellidos>Roman</apellidos>
+			<nombre>Antonio</nombre>
+			<correo>toso@gmail.com</correo>
+			<telefono tipotelef="MovilPersonal">
+				<numtelef>699696969</numtelef>
+			</telefono>
+		</persona>
+	</contacto>
+	<contacto>
+		<persona alias="ismpere">
+			<nombre>Ismael</nombre>
+			<correo>ismael@gmail.com</correo>
+			<correo>ismael@hotmail.com</correo>
+			<telefono tipotelef="MovilPersonal">
+				<numtelef>669251243</numtelef>
+			</telefono>
+			<telefono tipotelef="FijoCasa">
+				<numtelef>983511021</numtelef>
+			</telefono>
+		</persona>
+	</contacto>
+	<contacto>
+		<grupo nombregrupo="grupo1">
+			<miembro id="martorb"/>
+			<miembro id="toso"/>
+		</grupo>
+	</contacto>
+	<contacto>
+		<grupo nombregrupo="grupo2">
+			<miembro id="ismpere"/>
+			<miembro id="grupo1"/>
+		</grupo>
+	</contacto>
+    <contacto>
+        <persona alias="andalon">
+            <apellidos>Alonso</apellidos>
+            <nombre>Andrea</nombre>
+            <correo>andrea@gmail.com</correo>
+        </persona>
+    </contacto>
+</libreta_electronica>
