@@ -34,11 +34,11 @@ import org.w3c.dom.NodeList;
  */
 public class EContactSystemImpl implements EContactSystemInterface{
 	
-	boolean loaded, modified;
-	InputSource source;
-	Document document;
-	DocumentBuilderFactory domParserFactory;
-	DocumentBuilder parser;
+	private boolean loaded, modified;
+	private InputSource source;
+	private Document document;
+	private DocumentBuilderFactory domParserFactory;
+	private DocumentBuilder parser;
 	
 	/**
 	 * 
@@ -56,11 +56,12 @@ public class EContactSystemImpl implements EContactSystemInterface{
 
 	/**
 	 * Carga el XML y lo parsea unasndo DOM
-	 * @assert.pre !pathToXML.toString().isEmpty()
 	 * @param pathToXML 
+	 * @assert.pre !pathToXML.toString().isEmpty()
 	 */
 	public void loadFrom(Path pathToXML) {
 		assert(!pathToXML.toString().isEmpty());
+		
 		FileReader input;
 		domParserFactory = DocumentBuilderFactory.newInstance();
 		domParserFactory.setValidating(true);
@@ -129,6 +130,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	 */
 	public boolean isModifiedAfterLoaded(){
 		assert(isXMLLoaded());
+		
 		return modified;
 	}
 	/**
@@ -138,15 +140,15 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	 * @param surName Apellidos de la persona
 	 * @param emais Array que contiene los e-mails de la persona
 	 * @assert.pre isXMLLoaded()
+	 * @assert.pre !existsContactById(nickname)ç
 	 * @assert.pre emails.length>0
-	 * @assert.pre !existsContactById(nickname)
 	 */
 	public void createNewPerson(String name, String nickname, String surName, String[] emails,
 			Map<String, EnumKindOfPhone> phones) {
 		assert(isXMLLoaded());
+		assert(!existContactById(nickname));
 		assert(emails.length>0);
-		assert(!existsContactById(nickname));
-		Element libreta = document.getDocumentElement();
+		
 		Element persona = document.createElement("persona");
 		persona.setAttribute("alias", nickname);
 		if(surName != null){
@@ -172,11 +174,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 				persona.appendChild(telefono);
 			}
 		}
-		Element contacto = document.createElement("contacto");
-		contacto.appendChild(persona);
-		libreta.appendChild(contacto);	
-		
-		modified = true;
+		addToLibreta(persona);
 	}
 	
 	/**
@@ -184,13 +182,14 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	 * @param name Nombre para el nuevo grupo
 	 * @param contacts Array que contiene los contactos a añadir al nuevo grupo
 	 * @assert.pre isXMLLoaded()
+	 * @assert.pre !existsContactById(name)
 	 * @assert.pre contacts.length!=0;
 	 */
 	public void createNewGroup(String name, Contact[] contacts) {
 		assert(isXMLLoaded());
+		assert(!existContactById(name));
 		assert(contacts.length!=0);
 		
-		Element libreta = document.getDocumentElement();
 		Element grupo = document.createElement("grupo");
 		grupo.setAttribute("nombre", name);
 		for(int i=0;i<contacts.length;i++){
@@ -198,16 +197,19 @@ public class EContactSystemImpl implements EContactSystemInterface{
 			miembro.appendChild(document.createTextNode(contacts[i].getID()));
 			grupo.appendChild(miembro);
 		}
+		addToLibreta(grupo);	
 	}
 	
 	/**
 	 * Devuelve un elemento Contact a partir de su id
 	 * @param id ID del contacto buscado
-	 * @return contacto buscado
 	 * @assert.pre isXMLLoaded()
+	 * @assert.pre !id.isEmpty()
+	 * @return contacto buscado
 	 */
 	public Contact getAnyContactById(String id) {
 		assert(isXMLLoaded());
+		assert(!id.isEmpty());
 		
 		Element contacto = document.getElementById(id);
 		if(contacto!=null){
@@ -227,11 +229,13 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	/**
 	 * Devuelve un elemento Person a partir de su nick
 	 * @param name Nick de la persona
-	 * @return persona buscada (copia)
 	 * @assert.pre isXMLLoaded()
+	 * @assert.pre !name.isEmpty()
+	 * @return persona buscada (copia)
 	 */
 	public Person getPersonByNickname(String name) {
 		assert(isXMLLoaded());
+		assert(!name.isEmpty());
 		
 		Element persona = document.getElementById(name);
 		if(persona!=null && (persona.getNodeName().equals("persona"))){
@@ -269,11 +273,13 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	/**
 	 * Devuelve un elemento Group a partir de su nombre
 	 * @param name Nombre del grupo
-	 * @return grupo buscado (copia)
 	 * @assert.pre isXMLLoaded()
+	 * @assert.pre !name.isEmpty()
+	 * @return grupo buscado (copia)
 	 */
 	public Group getGroupByName(String name) {
 		assert(isXMLLoaded());
+		assert(!name.isEmpty());
 		
 		Element grupo = document.getElementById(name);
 		if(grupo!=null && (grupo.getNodeName().equals("grupo"))){
@@ -294,15 +300,21 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	 * @param contact Contacto a añadir al grupo
 	 * @param group Grupo buscado
 	 * @assert.pre isXMLLoaded()
+	 * @assert.pre existsContactById(contact.getID())
+	 * @assert.pre getGroupByName(group.getID())!=null
+	 * @assert.pre !group.containsContact(contact)
 	 */
 	public void addContactToGroup(Contact contact, Group group) {
 		assert(isXMLLoaded());
-		//assert(document.getElementById(group.getID())!=null);
-		//assert(document.getElementById(contact.getID())!=null);
+		assert(existContactById(contact.getID()));
+		assert(getGroupByName(group.getID())!=null);
+		assert(!group.containsContact(contact));
 		
 		Element grupo = document.getElementById(group.getID());
 		Element miembro =document.getElementById(contact.getID());
 		grupo.appendChild(miembro);
+		
+		modified = true;
 	}
 
 	/**
@@ -310,9 +322,15 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	 * @param contact Contacto a eliminar del grupo
 	 * @param group Grupo buscado
 	 * @assert.pre isXMLLoaded() 
+	 * @assert.pre existsContactById(contact.getID())
+	 * @assert.pre existsContactById(group.getID())
+	 * @assert.pre group.containsContact(contact)
 	 */
 	public void removeContactFromGroup(Contact contact, Group group) {
 		assert(isXMLLoaded());
+		assert(existContactById(contact.getID()));
+		assert(existContactById(group.getID()));
+		assert(group.containsContact(contact));
 		
 		Element grupo = document.getElementById(group.getID());
 		NodeList miembros = grupo.getElementsByTagName("miembro");
@@ -322,29 +340,49 @@ public class EContactSystemImpl implements EContactSystemInterface{
 			}
 			
 		}
+		modified = true;
 	}
 	/**
 	 * Elimina un elemento Contact del sistema
 	 * @param contact Contacto a eliminar
 	 * @assert.pre isXMLLoaded()
+	 * @assert.pre existsContactById(contact.getID())
 	 */
 	public void removeContactFromSystem(Contact contact){
 		assert(isXMLLoaded());
+		assert(existContactById(contact.getID()));
 		
 		Element contacto = document.getElementById(contact.getID());
 		contacto.getParentNode().removeChild(contacto);
+		modified = true;
 	}
 	/**
 	 * Devuelve si el contacto existe o no en la libreta de contactos
 	 * @param id
+	 * @assert.pre isXmlLoaded()
+	 * @assert.pre !id.isEmpty()
 	 * @return existe
 	 */
-	public boolean existsContactById(String id){
+	public boolean existContactById(String id){
+		assert(isXMLLoaded());
+		assert(!id.isEmpty());
 		boolean is = false;
 		if(getAnyContactById(id)!=null){
 			is = true;
 		}
 		return is;
+	}
+	/**
+	 * Añade el elemento x a la libreta de contactos
+	 * @param x
+	 */
+	private void addToLibreta(Element x){
+		Element libreta = document.getDocumentElement();
+		Element contacto = document.createElement("contacto");
+		contacto.appendChild(x);
+		libreta.appendChild(contacto);	
+		
+		modified = true;
 	}
 	
 }
