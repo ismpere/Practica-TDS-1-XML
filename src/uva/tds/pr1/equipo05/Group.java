@@ -2,6 +2,7 @@ package uva.tds.pr1.equipo05;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 /**
  * Implementacion de la clase Group
  * @author ismpere
@@ -42,23 +43,34 @@ public class Group extends Contact{
 	 * @return boolean está en el grupo
 	 */
 	public boolean containsContact(Contact c){
-		return contactos.contains(c);
+		boolean cont = false;
+		for(int i=0; i<contactos.size(); i++){
+			if(contactos.get(i).getID().equals(c.getID())){
+				cont = true;
+				break;
+			}
+		}
+		return cont;
 	}
 	/**
 	 * Elimina el contacto del grupo
 	 * @assert.pre containsContact(c)
 	 * @param c Contacto
 	 */
-	public void removeContact(Person c){
+	public void removeContact(Contact c){
 		assert(containsContact(c));
-		contactos.remove(c);
+		for(int i=0; i<contactos.size(); i++){
+			if(contactos.get(i).getID().equals(c.getID())){
+				contactos.remove(i);
+			}
+		}
 	}
 	/**
 	 * Devuelve una lista de los contactos del grupo
 	 * @return Contact[] contactos
 	 */
 	public Contact[] getContactos(){
-		return (Contact[])contactos.toArray();
+		return ((List<Contact>)contactos).toArray(new Contact[contactos.size()]);
 	}
 	
 	

@@ -1,5 +1,7 @@
 package uva.tds.pr1.equipo05;
 import java.util.*;
+
+import org.w3c.dom.Element;
 /**
  * 
  * @author martorb
@@ -20,6 +22,7 @@ public class Person extends Contact{
 		super(alias);
 		this.nombre = nombre;
 		this.correos = new ArrayList<String>(Arrays.asList(correos));
+		System.out.println("Cantidad de correos " + this.correos.size());
 		lista_telefonos = new HashMap<String, EnumKindOfPhone>();
 	}
 	/**
@@ -35,24 +38,7 @@ public class Person extends Contact{
 		this.nombre = nombre;
 		this.correos = new ArrayList<String>(Arrays.asList(correos));
 		this.lista_telefonos = new HashMap<String, EnumKindOfPhone>(lista_telefonos);
-	}
-	/**
-	 * 
-	 * @param nombre
-	 * @param apellidos
-	 * @param alias
-	 * @param correos
-	 * @param lista_telefonos
-	 */
-	public Person(String nombre, String apellidos, String alias, String[] correos, 
-			Map<String, EnumKindOfPhone> lista_telefonos){
-		super(alias);
-		this.nombre = nombre;
-		this.apellidos = apellidos;
-		this.correos = new ArrayList<String>(Arrays.asList(correos));
-		this.lista_telefonos = new HashMap<String, EnumKindOfPhone>(lista_telefonos);
-	}
-	
+	}	
 	/**
 	 * Cambia el nombre de la persona
 	 * @assert !nombre.equals("")
@@ -103,13 +89,6 @@ public class Person extends Contact{
 		lista_telefonos.put(num_telefono,tipo);
 	}
 	/**
-	 * Devuelve el alias de la persona
-	 * @return Alias
-	 */
-	public String getAlias(){
-		return super.getID();
-	}
-	/**
 	 * Devuelve el nombre de la persona
 	 * @return Nombre.
 	 */
@@ -128,15 +107,26 @@ public class Person extends Contact{
 	 * @return Correo electrónico.
 	 */
 	public String[] getCorreos(){
-		return (String[])correos.toArray();
+		return ((List<String>)correos).toArray(new String[correos.size()]);
 	}
 	/**
-	 * FALTA DE IMPLEMENTAR
-	 * @return Numero de telefono.
+	 * Devuelve una lista de numeros del tipo tipo
+	 * @param tipo
+	 * @return Lista de telefonos
 	 */
-	public String getTelefono(EnumKindOfPhone tipo){
-		return "A implementar";
+	public String[] getTelefonosTipo(EnumKindOfPhone tipo){
+		ArrayList<String> numeros = new ArrayList<String>();
+		for (Map.Entry<String, EnumKindOfPhone> entry : lista_telefonos.entrySet()){
+			if(entry.getValue().equals(tipo)){
+				numeros.add(entry.getKey());
+			}
+		}
+		return ((List<String>)numeros).toArray(new String[numeros.size()]);
 	}
+	/**
+	 * Devuelve un mapa de los telefonos con su tipo
+	 * @return telefonos
+	 */
 	public Map<String, EnumKindOfPhone> getTelefonos(){
 		Map<String, EnumKindOfPhone> aux = new HashMap<String, EnumKindOfPhone>(lista_telefonos);
 		return aux;

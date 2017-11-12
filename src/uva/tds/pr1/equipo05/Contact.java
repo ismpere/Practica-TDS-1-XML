@@ -1,4 +1,7 @@
 package uva.tds.pr1.equipo05;
+
+import java.util.ArrayList;
+
 /**
  * 
  * @author ismpere
