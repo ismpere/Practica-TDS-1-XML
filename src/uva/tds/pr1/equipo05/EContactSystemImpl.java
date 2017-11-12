@@ -283,7 +283,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		
 		Element grupo = document.getElementById(name);
 		if(grupo!=null && (grupo.getNodeName().equals("grupo"))){
-			NodeList nodeContactos = grupo.getElementsByTagName("contacto");
+			NodeList nodeContactos = grupo.getElementsByTagName("miembro");
 			Contact contactos[] = new Contact[nodeContactos.getLength()];
 			for(int i=0; i<nodeContactos.getLength(); i++){
 				String id = nodeContactos.item(i).getAttributes().item(0).getTextContent();

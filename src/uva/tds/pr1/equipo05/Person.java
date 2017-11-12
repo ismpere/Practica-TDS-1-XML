@@ -1,5 +1,7 @@
 package uva.tds.pr1.equipo05;
 import java.util.*;
+
+import org.w3c.dom.Element;
 /**
  * 
  * @author martorb
@@ -131,12 +133,27 @@ public class Person extends Contact{
 		return (String[])correos.toArray();
 	}
 	/**
-	 * FALTA DE IMPLEMENTAR
-	 * @return Numero de telefono.
+	 * Devuelve una lista de numeros del tipo tipo
+	 * @param tipo
+	 * @return Lista de telefonos
 	 */
-	public String getTelefono(EnumKindOfPhone tipo){
-		return "A implementar";
+	public String[] getTelefonosTipo(EnumKindOfPhone tipo){
+		ArrayList<String> numeros = new ArrayList<String>();
+		for (Map.Entry<String, EnumKindOfPhone> entry : lista_telefonos.entrySet()){
+			if(entry.getValue().equals(tipo)){
+				numeros.add(entry.getKey());
+			}
+		}
+		String numerosTipo[] = new String[numeros.size()];
+		for(int i=0; i<numeros.size(); i++){
+			numerosTipo[i] = numeros.get(i);
+		}
+		return numerosTipo;
 	}
+	/**
+	 * Devuelve un mapa de los telefonos con su tipo
+	 * @return telefonos
+	 */
 	public Map<String, EnumKindOfPhone> getTelefonos(){
 		Map<String, EnumKindOfPhone> aux = new HashMap<String, EnumKindOfPhone>(lista_telefonos);
 		return aux;
