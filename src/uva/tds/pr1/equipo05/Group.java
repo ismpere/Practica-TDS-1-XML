@@ -57,9 +57,13 @@ public class Group extends Contact{
 	 * @assert.pre containsContact(c)
 	 * @param c Contacto
 	 */
-	public void removeContact(Person c){
+	public void removeContact(Contact c){
 		assert(containsContact(c));
-		contactos.remove(c);
+		for(int i=0; i<contactos.size(); i++){
+			if(contactos.get(i).getID().equals(c.getID())){
+				contactos.remove(i);
+			}
+		}
 	}
 	/**
 	 * Devuelve una lista de los contactos del grupo

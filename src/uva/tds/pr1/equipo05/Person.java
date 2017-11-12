@@ -38,24 +38,7 @@ public class Person extends Contact{
 		this.nombre = nombre;
 		this.correos = new ArrayList<String>(Arrays.asList(correos));
 		this.lista_telefonos = new HashMap<String, EnumKindOfPhone>(lista_telefonos);
-	}
-	/**
-	 * 
-	 * @param nombre
-	 * @param apellidos
-	 * @param alias
-	 * @param correos
-	 * @param lista_telefonos
-	 */
-	public Person(String nombre, String apellidos, String alias, String[] correos, 
-			Map<String, EnumKindOfPhone> lista_telefonos){
-		super(alias);
-		this.nombre = nombre;
-		this.apellidos = apellidos;
-		this.correos = new ArrayList<String>(Arrays.asList(correos));
-		this.lista_telefonos = new HashMap<String, EnumKindOfPhone>(lista_telefonos);
-	}
-	
+	}	
 	/**
 	 * Cambia el nombre de la persona
 	 * @assert !nombre.equals("")
@@ -104,13 +87,6 @@ public class Person extends Contact{
 		assert(!num_telefono.equals(""));
 		assert(num_telefono.length()<50);
 		lista_telefonos.put(num_telefono,tipo);
-	}
-	/**
-	 * Devuelve el alias de la persona
-	 * @return Alias
-	 */
-	public String getAlias(){
-		return super.getID();
 	}
 	/**
 	 * Devuelve el nombre de la persona
