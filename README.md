@@ -7,7 +7,7 @@
 
 		Contact ----------------- SLOC: 41  LLOC: 17
 		EContactSystemInterface - SLOC: 96  LLOC: 30
-		EContactSystemImpl ------ SLOC: 467 LLOC:
+		EContactSystemImpl ------ SLOC: 467 LLOC: 385
 		EnumKindOfPhone --------- SLOC: 5   LLOC: 5
 		Group ------------------- SLOC: 65  LLOC: 26
 		Main -------------------- SLOC: 108 LLOC: 108

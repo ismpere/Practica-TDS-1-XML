@@ -42,13 +42,18 @@ public class EcontactSystemImplTest {
 	
 	@Test
 	public void testIsXMLLoaded() {
-		
+		EContactSystemInterface libreta = EContactSystemImpl.contactSystemFactory();
+		Path entrada_xml = Paths.get(System.getProperty("user.id"),"test/xmlTestFiles/testLoadFrom.xml");
+		libreta.loadFrom(entrada_xml);
+		assertTrue(libreta.isXMLLoaded());
 	}
 	
 	
 	@Test
 	public void testIsModifiedAfterLoaded() {
-		
+		EContactSystemInterface libreta = EContactSystemImpl.contactSystemFactory();
+		Path entrada_xml = Paths.get(System.getProperty("user.id"),"test/xmlTestFiles/testLoadFrom.xml");
+		libreta.loadFrom(entrada_xml);
 	}
 	
 
