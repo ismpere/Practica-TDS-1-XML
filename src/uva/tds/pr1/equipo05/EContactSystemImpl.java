@@ -56,9 +56,11 @@ public class EContactSystemImpl implements EContactSystemInterface{
 
 	/**
 	 * Carga el XML y lo parsea unasndo DOM
+	 * @assert.pre !pathToXML.toString().isEmpty()
 	 * @param pathToXML 
 	 */
 	public void loadFrom(Path pathToXML) {
+		assert(!pathToXML.toString().isEmpty());
 		FileReader input;
 		domParserFactory = DocumentBuilderFactory.newInstance();
 		domParserFactory.setValidating(true);
@@ -77,6 +79,8 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		}
 		loaded = true;
 		modified = false;
+		
+		//Los print se quitan antes de la entrega
 		System.out.println(parser.getClass());
 		System.out.println(parser.isValidating());
 		System.out.println(document.getDoctype().getName());
@@ -84,7 +88,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 	
 	/**
-	 * 
+	 * Actualiza la libreta electronica en otro XML en la ruta pasada como argumento
 	 * @assert.pre isModifiedAfterLoaded()
 	 */
 	public void updateTo(Path pathToXML) {
@@ -102,6 +106,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			transformer.transform(source, result);
 
+			//Los print se eliminan antes de entregar
 			System.out.println("File saved!");
 		}catch(Exception e){
 			throw new IllegalStateException("Ha ocurrido un problema al actualizar el archivo");
@@ -110,7 +115,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 	
 	/**
-	 * Indica si el XML ya ha sido cargado
+	 * Indica si el XML ha sido cargado
 	 * @return loaded 
 	 */
 	public boolean isXMLLoaded(){
@@ -119,9 +124,11 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	
 	/**
 	 * Indica si el XML ha sido modificado después de haber sido cargado
+	 * @assert.pre isXmlLoaded()
 	 * @return modified
 	 */
 	public boolean isModifiedAfterLoaded(){
+		assert(isXMLLoaded());
 		return modified;
 	}
 	/**
@@ -132,13 +139,13 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	 * @param emais Array que contiene los e-mails de la persona
 	 * @assert.pre isXMLLoaded()
 	 * @assert.pre emails.length>0
-	 * @assert.pre !isContactById(nickname)
+	 * @assert.pre !existsContactById(nickname)
 	 */
 	public void createNewPerson(String name, String nickname, String surName, String[] emails,
 			Map<String, EnumKindOfPhone> phones) {
 		assert(isXMLLoaded());
 		assert(emails.length>0);
-		//assert(!isContactById(nickname));
+		assert(!existsContactById(nickname));
 		Element libreta = document.getDocumentElement();
 		Element persona = document.createElement("persona");
 		persona.setAttribute("alias", nickname);
@@ -327,9 +334,14 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		Element contacto = document.getElementById(contact.getID());
 		contacto.getParentNode().removeChild(contacto);
 	}
-	public boolean isContactById(String id){
+	/**
+	 * Devuelve si el contacto existe o no en la libreta de contactos
+	 * @param id
+	 * @return existe
+	 */
+	public boolean existsContactById(String id){
 		boolean is = false;
-		if(!(getAnyContactById(id) == null)){
+		if(getAnyContactById(id)!=null){
 			is = true;
 		}
 		return is;
