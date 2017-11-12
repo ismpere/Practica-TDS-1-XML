@@ -39,5 +39,21 @@ public class EcontactSystemImplTest {
 		assertFalse("¿Son los XML idénticos? "+miDiff.toString(),miDiff.hasDifferences());
 		
 	}
+	
+	@Test
+	public void testIsXMLLoaded() {
+		
+	}
+	
+	
+	@Test
+	public void testIsModifiedAfterLoaded() {
+		
+	}
+	
 
+	
+	
+	
+	
 }
