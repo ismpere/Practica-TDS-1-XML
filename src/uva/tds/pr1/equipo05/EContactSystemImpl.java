@@ -37,9 +37,12 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	
 	private boolean loaded, modified;
 	private InputSource source;
-	private Document document;
+	private Document document, doc;
 	private DocumentBuilderFactory domParserFactory;
 	private DocumentBuilder parser;
+	private Path ruta;
+	private ArrayList<Person> personas;
+	private ArrayList<Group> grupos;
 	
 	/**
 	 * 
@@ -62,6 +65,8 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	 */
 	public void loadFrom(Path pathToXML) {
 		assert(!pathToXML.toString().isEmpty());
+		
+		ruta = pathToXML;
 		
 		FileReader input;
 		domParserFactory = DocumentBuilderFactory.newInstance();
@@ -87,6 +92,26 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		System.out.println(parser.isValidating());
 		System.out.println(document.getDoctype().getName());
 		
+		personas = new ArrayList<Person>();
+		NodeList per = document.getElementsByTagName("persona");
+		per.item(0).getAttributes().item(0).getTextContent();
+		for(int i=0; i<per.getLength(); i++){
+			String id = per.item(i).getAttributes().item(0).getTextContent();
+			System.out.println(id);
+			Element persona = document.getElementById(id);
+			personas.add(getPerson(persona));
+		}
+		grupos = new ArrayList<Group>();
+		NodeList grp = document.getElementsByTagName("grupo");
+		grp.item(0).getAttributes().item(0).getTextContent();
+		for(int i=0; i<grp.getLength(); i++){
+			String id = grp.item(i).getAttributes().item(0).getTextContent();
+			System.out.println(id);
+			Element grupo = document.getElementById(id);
+			grupos.add(getGroup(grupo));
+		}
+		System.out.println(grupos.size());
+		
 	}
 	
 	/**
@@ -94,9 +119,19 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	 */
 	public void updateTo(Path pathToXML) {
 		
+		doc = parser.newDocument();
+		Element libreta = doc.createElement("libreta_electronica");
+		doc.appendChild(libreta);
+		for(int i=0; i<personas.size(); i++){
+			personToLibreta(personas.get(i));
+		}
+		for(int i=0; i<grupos.size(); i++){
+			groupToLibreta(grupos.get(i));
+		}
+		
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		String systemId = document.getDoctype().getSystemId();
-		DOMSource source = new DOMSource(document);
+		DOMSource source = new DOMSource(doc);
 		StreamResult result = new StreamResult(new File(pathToXML.toString()));
 		try{
 			Transformer transformer = transformerFactory.newTransformer();
@@ -148,32 +183,16 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		assert(!existContactById(nickname));
 		assert(emails.length>0);
 		
-		Element persona = document.createElement("persona");
-		persona.setAttribute("alias", nickname);
-		if(surName != null){
-			Element apellidos = document.createElement("apellidos");
-			apellidos.appendChild(document.createTextNode(surName));
-			persona.appendChild(apellidos);
+		Person persona;
+		if(phones!=null && phones.size()>0){
+			persona = new Person(name, nickname, emails, phones);
+		}else{
+			persona = new Person(name, nickname, emails);
 		}
-		Element nombre = document.createElement("nombre");
-		nombre.appendChild(document.createTextNode(name));
-		persona.appendChild(nombre);
-		for(int i=0; i<emails.length; i++){
-			Element correo = document.createElement("correo");
-			correo.appendChild(document.createTextNode(emails[i]));
-			persona.appendChild(correo);
+		if(surName!=null){
+			persona.setApellidos(surName);
 		}
-		if(phones != null && !phones.isEmpty()){
-			for (Map.Entry<String, EnumKindOfPhone> entry : phones.entrySet()){
-				Element telefono = document.createElement("telefono");
-				telefono.setAttribute("tipotelef", entry.getValue().toString());
-				Element numtelef = document.createElement("numtelef");
-				numtelef.appendChild(document.createTextNode(entry.getKey()));
-				telefono.appendChild(numtelef);
-				persona.appendChild(telefono);
-			}
-		}
-		addToLibreta(persona);
+		personas.add(persona);
 	}
 	
 	/**
@@ -189,14 +208,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		assert(!existContactById(name));
 		assert(contacts.length!=0);
 		
-		Element grupo = document.createElement("grupo");
-		grupo.setAttribute("nombre", name);
-		for(int i=0;i<contacts.length;i++){
-			Element miembro=document.createElement("miembro"+(i+1));
-			miembro.appendChild(document.createTextNode(contacts[i].getID()));
-			grupo.appendChild(miembro);
-		}
-		addToLibreta(grupo);	
+		grupos.add(new Group(name, contacts));	
 	}
 	
 	/**
@@ -210,20 +222,15 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		assert(isXMLLoaded());
 		assert(!id.isEmpty());
 		
-		Element contacto = document.getElementById(id);
-		if(contacto!=null){
-			Contact x = null;
-			if(getPersonByNickname(id)!=null){
-				x = getPersonByNickname(id);
-			}else{
-				if(getGroupByName(id)!=null){
-					x = getGroupByName(id);
-				}
-			}
-			return x;
+		Contact x = null;
+		if(getPersonByNickname(id)!=null){
+			x = getPersonByNickname(id);
 		}else{
-			return null;
+			if(getGroupByName(id)!=null){
+				x = getGroupByName(id);
+			}
 		}
+		return x;
 	}
 	/**
 	 * Devuelve un elemento Person a partir de su nick
@@ -236,37 +243,13 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		assert(isXMLLoaded());
 		assert(!name.isEmpty());
 		
-		Element persona = document.getElementById(name);
-		if(persona!=null && (persona.getNodeName().equals("persona"))){
-			String nombre;
-			String apellidos = null;
-			Map<String, EnumKindOfPhone> telefonos = null;
-			
-			
-			nombre = persona.getElementsByTagName("nombre").item(0).getTextContent();
-			if(persona.getElementsByTagName("apellidos")!=null){
-				apellidos = persona.getElementsByTagName("apellidos").item(0).getTextContent();
+		Person x = null;
+		for(int i=0; i<personas.size(); i++){
+			if(personas.get(i).getID().equals(name)){
+				x = personas.get(i);
 			}
-			NodeList nodeCorreos = persona.getElementsByTagName("correo");
-			String correos[] = new String[nodeCorreos.getLength()];
-			for(int i=0; i<nodeCorreos.getLength(); i++){
-				correos[i] = nodeCorreos.item(i).getTextContent();
-			}
-			NodeList nodeTelefonos = persona.getElementsByTagName("telefono");
-			if(nodeTelefonos!=null){
-				telefonos = new HashMap<String, EnumKindOfPhone>(nodeTelefonos.getLength());
-				for(int i=0; i<nodeTelefonos.getLength(); i++){
-					NamedNodeMap attr = nodeTelefonos.item(i).getAttributes();
-					String tipotelef = attr.getNamedItem("tipotelef").getTextContent();
-					EnumKindOfPhone tt = EnumKindOfPhone.valueOf(tipotelef);
-					String numero = nodeTelefonos.item(i).getTextContent();
-					telefonos.put(numero, tt);
-				}
-			}
-			return new Person(nombre, apellidos, name, correos, telefonos);
-		}else{
-			return null;
 		}
+		return x;		
 	}
 
 	/**
@@ -280,18 +263,13 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		assert(isXMLLoaded());
 		assert(!name.isEmpty());
 		
-		Element grupo = document.getElementById(name);
-		if(grupo!=null && (grupo.getNodeName().equals("grupo"))){
-			NodeList nodeContactos = grupo.getElementsByTagName("miembro");
-			Contact contactos[] = new Contact[nodeContactos.getLength()];
-			for(int i=0; i<nodeContactos.getLength(); i++){
-				String id = nodeContactos.item(i).getAttributes().item(0).getTextContent();
-				contactos[i] = getAnyContactById(id);
+		Group x = null;
+		for(int i=0; i<grupos.size(); i++){
+			if(grupos.get(i).getID().equals(name)){
+				x = grupos.get(i);
 			}
-			return new Group(name, contactos);
-		}else{
-			return null;
 		}
+		return x;
 	}
 
 	/**
@@ -300,20 +278,16 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	 * @param group Grupo buscado
 	 * @assert.pre isXMLLoaded()
 	 * @assert.pre existsContactById(contact.getID())
-	 * @assert.pre getGroupByName(group.getID())!=null
+	 * @assert.pre existGroupById(group.getID())
 	 * @assert.pre !group.containsContact(contact)
 	 */
 	public void addContactToGroup(Contact contact, Group group) {
 		assert(isXMLLoaded());
 		assert(existContactById(contact.getID()));
-		assert(getGroupByName(group.getID())!=null);
+		assert(existGroupById(group.getID()));
 		assert(!group.containsContact(contact));
 		
-		Element grupo = document.getElementById(group.getID());
-		Element miembro =document.getElementById(contact.getID());
-		grupo.appendChild(miembro);
-		
-		modified = true;
+		getGroupByName(group.getID()).addContact(contact);
 	}
 
 	/**
@@ -327,21 +301,10 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	 */
 	public void removeContactFromGroup(Contact contact, Group group) {
 		assert(isXMLLoaded());
-		assert(existContactById(contact.getID()));
 		assert(existContactById(group.getID()));
 		assert(group.containsContact(contact));
-		
-		Element grupo = document.getElementById(group.getID());
-		NodeList miembros = grupo.getElementsByTagName("miembro");
-		for(int i=0;i<miembros.getLength();i++){
-			String id = miembros.item(i).getAttributes().item(0).toString();
-			if(id.contains(contact.getID())){
-				grupo.removeChild(miembros.item(i));
-				break;
-			}
-			
-		}
-		modified = true;
+
+		group.removeContact(contact);
 	}
 	/**
 	 * Elimina un elemento Contact del sistema
@@ -353,9 +316,16 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		assert(isXMLLoaded());
 		assert(existContactById(contact.getID()));
 		
-		Element contacto = document.getElementById(contact.getID());
-		contacto.getParentNode().removeChild(contacto);
-		modified = true;
+		if(existPersonById(contact.getID())){
+			personas.remove(contact);
+		}else{
+			grupos.remove(contact);
+		}
+		for(int i=0; i<grupos.size(); i++){
+			if(grupos.get(i).containsContact(contact)){
+				removeContactFromGroup(contact, grupos.get(i));
+			}
+		}
 	}
 	/**
 	 * Devuelve si el contacto existe o no en la libreta de contactos
@@ -367,19 +337,127 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	public boolean existContactById(String id){
 		assert(isXMLLoaded());
 		assert(!id.isEmpty());
+		return(existPersonById(id) || existGroupById(id));
+	}
+	public boolean existPersonById(String id){
 		boolean is = false;
-		if(getAnyContactById(id)!=null){
-			is = true;
+		for(int i=0; i<personas.size(); i++){
+			if(personas.get(i).getID().equals(id)){
+				is = true;
+			}
 		}
 		return is;
+	}
+	public boolean existGroupById(String id){
+		boolean is = false;
+		for(int i=0; i<grupos.size(); i++){
+			if(grupos.get(i).getID().equals(id)){
+				is = true;
+			}
+		}
+		return is;
+	}
+	private Person getPerson(Element persona){
+		String nombre, id;
+		String apellidos = null;
+		Map<String, EnumKindOfPhone> telefonos = null;
+		
+		id = persona.getAttribute("alias");
+		
+		nombre = persona.getElementsByTagName("nombre").item(0).getTextContent();
+		if(persona.getElementsByTagName("apellidos").getLength()>0){
+			apellidos = persona.getElementsByTagName("apellidos").item(0).getTextContent();
+		}
+		NodeList nodeCorreos = persona.getElementsByTagName("correo");
+		String correos[] = new String[nodeCorreos.getLength()];
+		for(int i=0; i<nodeCorreos.getLength(); i++){
+			correos[i] = nodeCorreos.item(i).getTextContent();
+		}
+		NodeList nodeTelefonos = persona.getElementsByTagName("telefono");
+		if(nodeTelefonos.getLength()>0){
+			telefonos = new HashMap<String, EnumKindOfPhone>(nodeTelefonos.getLength());
+			for(int i=0; i<nodeTelefonos.getLength(); i++){
+				NamedNodeMap attr = nodeTelefonos.item(i).getAttributes();
+				String tipotelef = attr.getNamedItem("tipotelef").getTextContent();
+				EnumKindOfPhone tt = EnumKindOfPhone.valueOf(tipotelef);
+				String numero = nodeTelefonos.item(i).getTextContent();
+				telefonos.put(numero, tt);
+			}
+		}
+		Person x;
+		if(telefonos!=null && telefonos.size()>0){
+			x = new Person(nombre, id, correos, telefonos);
+		}else{
+			x = new Person(nombre, id, correos);
+		}
+		if(apellidos!=null){
+			x.setApellidos(apellidos);
+		}
+		return x;
+	}
+	private Group getGroup(Element grupo){
+		String name = grupo.getAttribute("nombregrupo");
+		System.out.println(name);
+		NodeList nodeContactos = grupo.getElementsByTagName("miembro");
+		Contact contactos[] = new Contact[nodeContactos.getLength()];
+		for(int i=0; i<nodeContactos.getLength(); i++){
+			String id = nodeContactos.item(i).getAttributes().item(0).getTextContent();
+			Element x = document.getElementById(id);
+			if(x.getNodeName().equals("persona")){
+				contactos[i]=getPerson(x);
+			}else{
+				contactos[i]=getGroup(x);
+			}
+		}
+		return new Group(name, contactos);
+	}
+	private void personToLibreta(Person p){
+		Element persona = doc.createElement("persona");
+		persona.setAttribute("alias", p.getID());
+		if(p.getApellidos() != null){
+			Element apellidos = doc.createElement("apellidos");
+			apellidos.appendChild(doc.createTextNode(p.getApellidos()));
+			persona.appendChild(apellidos);
+		}
+		Element nombre = doc.createElement("nombre");
+		nombre.appendChild(doc.createTextNode(p.getNombre()));
+		persona.appendChild(nombre);
+		for(int i=0; i<p.getCorreos().length; i++){
+			Element correo = doc.createElement("correo");
+			correo.appendChild(doc.createTextNode(p.getCorreos()[i]));
+			persona.appendChild(correo);
+		}
+		if(p.getTelefonos() != null && !p.getTelefonos().isEmpty()){
+			for (Map.Entry<String, EnumKindOfPhone> entry : p.getTelefonos().entrySet()){
+				Element telefono = doc.createElement("telefono");
+				telefono.setAttribute("tipotelef", entry.getValue().toString());
+				Element numtelef = doc.createElement("numtelef");
+				numtelef.appendChild(doc.createTextNode(entry.getKey()));
+				telefono.appendChild(numtelef);
+				persona.appendChild(telefono);
+			}
+		}
+		addToLibreta(persona);
+
+	}
+	private void groupToLibreta(Group g){
+		Element grupo = doc.createElement("grupo");
+		grupo.setAttribute("nombre", g.getID());
+		for(int i=0;i<g.getContactos().length;i++){
+			Element miembro=doc.createElement("miembro");
+			miembro.setAttribute("id", g.getContactos()[i].getID());
+			grupo.appendChild(miembro);
+		}
+		addToLibreta(grupo);	
+
 	}
 	/**
 	 * Añade el elemento x a la libreta de contactos
 	 * @param x
 	 */
 	private void addToLibreta(Element x){
-		Element libreta = document.getDocumentElement();
-		Element contacto = document.createElement("contacto");
+		Element libreta = doc.getDocumentElement();
+		Element contacto = doc.createElement("contacto");
 		contacto.appendChild(x);
 		libreta.appendChild(contacto);	
 		
