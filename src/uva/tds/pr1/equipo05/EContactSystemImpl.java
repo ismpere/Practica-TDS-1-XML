@@ -26,6 +26,12 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * Implentnetación de la interfaz EContactSystemInterface
+ * @author martorb
+ * @author ismpere
+ *
+ */
 public class EContactSystemImpl implements EContactSystemInterface{
 	
 	boolean loaded, modified;
@@ -34,13 +40,24 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	DocumentBuilderFactory domParserFactory;
 	DocumentBuilder parser;
 	
+	/**
+	 * 
+	 */
 	public EContactSystemImpl(){		
 	}
 	
+	/**
+	 * Método factoriía, devuelve la implementación
+	 * @return EContactSystemImpl
+	 */
 	public static EContactSystemInterface contactSystemFactory(){
 		return new EContactSystemImpl();		
 	}
 
+	/**
+	 * Carga el XML y lo parsea unasndo DOM
+	 * @param pathToXML 
+	 */
 	public void loadFrom(Path pathToXML) {
 		FileReader input;
 		domParserFactory = DocumentBuilderFactory.newInstance();
@@ -65,11 +82,14 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		System.out.println(document.getDoctype().getName());
 		
 	}
+	
 	/**
+	 * 
 	 * @assert.pre isModifiedAfterLoaded()
 	 */
 	public void updateTo(Path pathToXML) {
 		assert(isModifiedAfterLoaded());
+		
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		String systemId = document.getDoctype().getSystemId();
 		DOMSource source = new DOMSource(document);
@@ -89,14 +109,27 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		
 	}
 	
+	/**
+	 * Indica si el XML ya ha sido cargado
+	 * @return loaded 
+	 */
 	public boolean isXMLLoaded(){
 		return loaded;
 	}
 	
+	/**
+	 * Indica si el XML ha sido modificado después de haber sido cargado
+	 * @return modified
+	 */
 	public boolean isModifiedAfterLoaded(){
 		return modified;
 	}
 	/**
+	 * Crea un nuevo elemento Person en el documento
+	 * @param name Nombre de la persona
+	 * @param nickname Nick de la persona
+	 * @param surName Apellidos de la persona
+	 * @param emais Array que contiene los e-mails de la persona
 	 * @assert.pre isXMLLoaded()
 	 * @assert.pre emails.length>0
 	 * @assert.pre !isContactById(nickname)
@@ -140,8 +173,11 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	}
 	
 	/**
-	 * @assert.pre
-	 * @assert.pre
+	 * Crea un nuevo elemento Group en el documento
+	 * @param name Nombre para el nuevo grupo
+	 * @param contacts Array que contiene los contactos a añadir al nuevo grupo
+	 * @assert.pre isXMLLoaded()
+	 * @assert.pre contacts.length!=0;
 	 */
 	public void createNewGroup(String name, Contact[] contacts) {
 		assert(isXMLLoaded());
@@ -156,8 +192,16 @@ public class EContactSystemImpl implements EContactSystemInterface{
 			grupo.appendChild(miembro);
 		}
 	}
-
+	
+	/**
+	 * Devuelve un elemento Contact a partir de su id
+	 * @param id ID del contacto buscado
+	 * @return contacto buscado
+	 * @assert.pre isXMLLoaded()
+	 */
 	public Contact getAnyContactById(String id) {
+		assert(isXMLLoaded());
+		
 		Element contacto = document.getElementById(id);
 		if(contacto!=null){
 			Contact x = null;
@@ -173,8 +217,15 @@ public class EContactSystemImpl implements EContactSystemInterface{
 			return null;
 		}
 	}
-
+	/**
+	 * Devuelve un elemento Person a partir de su nick
+	 * @param name Nick de la persona
+	 * @return persona buscada (copia)
+	 * @assert.pre isXMLLoaded()
+	 */
 	public Person getPersonByNickname(String name) {
+		assert(isXMLLoaded());
+		
 		Element persona = document.getElementById(name);
 		if(persona!=null && (persona.getNodeName().equals("persona"))){
 			String nombre;
@@ -208,7 +259,15 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		}
 	}
 
+	/**
+	 * Devuelve un elemento Group a partir de su nombre
+	 * @param name Nombre del grupo
+	 * @return grupo buscado (copia)
+	 * @assert.pre isXMLLoaded()
+	 */
 	public Group getGroupByName(String name) {
+		assert(isXMLLoaded());
+		
 		Element grupo = document.getElementById(name);
 		if(grupo!=null && (grupo.getNodeName().equals("grupo"))){
 			NodeList nodeContactos = grupo.getElementsByTagName("contacto");
@@ -223,16 +282,31 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		}
 	}
 
+	/**
+	 * Añade un elemento Contact a un grupo (Group)
+	 * @param contact Contacto a añadir al grupo
+	 * @param group Grupo buscado
+	 * @assert.pre isXMLLoaded()
+	 */
 	public void addContactToGroup(Contact contact, Group group) {
-		assert(document.getElementById(group.getID())!=null);
-		assert(document.getElementById(contact.getID())!=null);
+		assert(isXMLLoaded());
+		//assert(document.getElementById(group.getID())!=null);
+		//assert(document.getElementById(contact.getID())!=null);
 		
 		Element grupo = document.getElementById(group.getID());
 		Element miembro =document.getElementById(contact.getID());
 		grupo.appendChild(miembro);
 	}
 
+	/**
+	 * Elimina un elemento Contact de un grupo (Group)
+	 * @param contact Contacto a eliminar del grupo
+	 * @param group Grupo buscado
+	 * @assert.pre isXMLLoaded() 
+	 */
 	public void removeContactFromGroup(Contact contact, Group group) {
+		assert(isXMLLoaded());
+		
 		Element grupo = document.getElementById(group.getID());
 		NodeList miembros = grupo.getElementsByTagName("miembro");
 		for(int i=0;i<miembros.getLength();i++){
@@ -242,8 +316,14 @@ public class EContactSystemImpl implements EContactSystemInterface{
 			
 		}
 	}
-	
+	/**
+	 * Elimina un elemento Contact del sistema
+	 * @param contact Contacto a eliminar
+	 * @assert.pre isXMLLoaded()
+	 */
 	public void removeContactFromSystem(Contact contact){
+		assert(isXMLLoaded());
+		
 		Element contacto = document.getElementById(contact.getID());
 		contacto.getParentNode().removeChild(contacto);
 	}
