@@ -138,7 +138,11 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		
 		modified = true;
 	}
-
+	
+	/**
+	 * @assert.pre
+	 * @assert.pre
+	 */
 	public void createNewGroup(String name, Contact[] contacts) {
 		assert(isXMLLoaded());
 		assert(contacts.length!=0);
