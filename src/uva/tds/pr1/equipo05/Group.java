@@ -2,6 +2,7 @@ package uva.tds.pr1.equipo05;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 /**
  * Implementacion de la clase Group
  * @author ismpere
@@ -58,7 +59,8 @@ public class Group extends Contact{
 	 * @return Contact[] contactos
 	 */
 	public Contact[] getContactos(){
-		return (Contact[])contactos.toArray();
+		System.out.println("Llama a la funcion");
+		return ((List<Contact>)contactos).toArray(new Contact[contactos.size()]);
 	}
 	
 	
