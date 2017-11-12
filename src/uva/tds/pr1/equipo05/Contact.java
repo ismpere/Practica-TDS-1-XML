@@ -1,4 +1,7 @@
 package uva.tds.pr1.equipo05;
+
+import java.util.ArrayList;
+
 /**
  * 
  * @author ismpere
@@ -36,6 +39,18 @@ public class Contact {
 		assert(!id.equals(""));
 		assert(id.length()<=20);
 		this.id = id;
+	}
+	/**
+	 * Pasa un arrayList de Contact a un array del mismo tipo
+	 * @param x
+	 * @return Contact[] contactos
+	 */
+	protected Contact[] toArray(ArrayList<Contact> x){
+		Contact y[] = new Contact[x.size()];
+		for(int i=0; i<x.size(); i++){
+			y[i] = x.get(i);
+		}
+		return y;
 	}
 	
 }
