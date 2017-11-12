@@ -59,7 +59,8 @@ public class Group extends Contact{
 	 * @return Contact[] contactos
 	 */
 	public Contact[] getContactos(){
-		return toArray(contactos);
+		System.out.println("Llama a la funcion");
+		return ((List<Contact>)contactos).toArray(new Contact[contactos.size()]);
 	}
 	
 	
