@@ -15,6 +15,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
@@ -248,7 +249,7 @@ public class EContactSystemImpl implements EContactSystemInterface{
 			if(persona.getElementsByTagName("apellidos")!=null){
 				apellidos = persona.getElementsByTagName("apellidos").item(0).getTextContent();
 			}
-			NodeList nodeCorreos = persona.getElementsByTagName("correos");
+			NodeList nodeCorreos = persona.getElementsByTagName("correo");
 			String correos[] = new String[nodeCorreos.getLength()];
 			for(int i=0; i<nodeCorreos.getLength(); i++){
 				correos[i] = nodeCorreos.item(i).getTextContent();
@@ -335,8 +336,10 @@ public class EContactSystemImpl implements EContactSystemInterface{
 		Element grupo = document.getElementById(group.getID());
 		NodeList miembros = grupo.getElementsByTagName("miembro");
 		for(int i=0;i<miembros.getLength();i++){
-			if(miembros.item(i).getTextContent()==contact.getID()){
+			String id = miembros.item(i).getAttributes().item(0).toString();
+			if(id.contains(contact.getID())){
 				grupo.removeChild(miembros.item(i));
+				break;
 			}
 			
 		}

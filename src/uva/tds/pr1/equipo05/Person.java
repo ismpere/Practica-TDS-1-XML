@@ -22,6 +22,7 @@ public class Person extends Contact{
 		super(alias);
 		this.nombre = nombre;
 		this.correos = new ArrayList<String>(Arrays.asList(correos));
+		System.out.println("Cantidad de correos " + this.correos.size());
 		lista_telefonos = new HashMap<String, EnumKindOfPhone>();
 	}
 	/**
@@ -130,7 +131,7 @@ public class Person extends Contact{
 	 * @return Correo electrónico.
 	 */
 	public String[] getCorreos(){
-		return (String[])correos.toArray();
+		return ((List<String>)correos).toArray(new String[correos.size()]);
 	}
 	/**
 	 * Devuelve una lista de numeros del tipo tipo
@@ -144,11 +145,7 @@ public class Person extends Contact{
 				numeros.add(entry.getKey());
 			}
 		}
-		String numerosTipo[] = new String[numeros.size()];
-		for(int i=0; i<numeros.size(); i++){
-			numerosTipo[i] = numeros.get(i);
-		}
-		return numerosTipo;
+		return ((List<String>)numeros).toArray(new String[numeros.size()]);
 	}
 	/**
 	 * Devuelve un mapa de los telefonos con su tipo

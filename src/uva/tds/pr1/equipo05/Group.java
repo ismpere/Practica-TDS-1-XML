@@ -43,7 +43,14 @@ public class Group extends Contact{
 	 * @return boolean está en el grupo
 	 */
 	public boolean containsContact(Contact c){
-		return contactos.contains(c);
+		boolean cont = false;
+		for(int i=0; i<contactos.size(); i++){
+			if(contactos.get(i).getID().equals(c.getID())){
+				cont = true;
+				break;
+			}
+		}
+		return cont;
 	}
 	/**
 	 * Elimina el contacto del grupo
@@ -59,7 +66,6 @@ public class Group extends Contact{
 	 * @return Contact[] contactos
 	 */
 	public Contact[] getContactos(){
-		System.out.println("Llama a la funcion");
 		return ((List<Contact>)contactos).toArray(new Contact[contactos.size()]);
 	}
 	
