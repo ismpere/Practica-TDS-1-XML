@@ -91,10 +91,8 @@ public class EContactSystemImpl implements EContactSystemInterface{
 	
 	/**
 	 * Actualiza la libreta electronica en otro XML en la ruta pasada como argumento
-	 * @assert.pre isModifiedAfterLoaded()
 	 */
 	public void updateTo(Path pathToXML) {
-		assert(isModifiedAfterLoaded());
 		
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		String systemId = document.getDoctype().getSystemId();
